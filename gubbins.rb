@@ -1,0 +1,69 @@
+class Gubbins < Formula
+  desc "Detect recombinations in Bacteria"
+  homepage "https://github.com/sanger-pathogens/gubbins"
+  url "https://github.com/sanger-pathogens/gubbins/archive/v1.4.0.tar.gz"
+  sha256 "9b3ff134b5cfc27ef78f29c12d413ed87637fd97c7ae41e5ac9c81f3d34c4464"
+  head "https://github.com/sanger-pathogens/gubbins.git"
+  # tag "bioinformatics"
+  # doi "10.1093/nar/gku1196"
+
+  depends_on "autoconf"  => :build
+  depends_on "automake"  => :build
+  depends_on "libtool"   => :build
+  depends_on "check"     => :build
+  depends_on :python3
+  depends_on "homebrew/python/numpy"  => :python3
+  depends_on "homebrew/python/pillow" => :python3
+  depends_on "homebrew/dupes/zlib"  unless OS.mac?
+  depends_on "raxml"
+  depends_on "fasttree" => ["with-double", :recommended]
+  depends_on "fastml"   => :recommended
+
+  resource "biopython" do
+    url "https://pypi.python.org/packages/source/b/biopython/biopython-1.65.tar.gz"
+    sha256 "6d591523ba4d07a505978f6e1d7fac57e335d6d62fb5b0bcb8c40bdde5c8998e"
+  end
+
+  resource "dendropy" do
+    url "https://pypi.python.org/packages/source/D/DendroPy/DendroPy-4.0.2.tar.gz"
+    sha256 "b118c9e3e9408f2727e374032f6743a630e8a9239d84f898ed08cd5e68c5238d"
+  end
+
+  resource "nose" do
+    url "https://pypi.python.org/packages/source/n/nose/nose-1.3.7.tar.gz"
+    sha256 "f1bffef9cbc82628f6e7d7b40d7e255aefaa1adb6a1b1d26c69a8b79e6208a98"
+  end
+
+  resource "reportlab" do
+    url "https://pypi.python.org/packages/source/r/reportlab/reportlab-3.2.0.tar.gz"
+    sha256 "72e687662bd854776407b9108483561831b45546d935df8b0477708199086293"
+  end
+
+  def install
+    ENV.prepend_create_path "PYTHONPATH", libexec/"vendor/lib/python#{Language::Python.major_minor_version "python3"}/site-packages"
+    %w[nose dendropy reportlab biopython].each do |r|
+      resource(r).stage do
+        system "python3", *Language::Python.setup_install_args(libexec/"vendor")
+      end
+    end
+
+    if OS.mac?
+      inreplace "src/Makefile.am", "-lrt", ""
+      inreplace "configure.ac", "PKG_CHECK_MODULES([zlib], [zlib])", "AC_CHECK_LIB(zlib, zlib)"
+    end
+
+    system "autoreconf", "-i"
+    system "./configure",
+           "--disable-debug",
+           "--disable-dependency-tracking",
+           "--prefix=#{prefix}"
+    system "make", "check"
+    system "make", "install"
+  end
+
+  test do
+    assert_match "recombinations", shell_output("gubbins -h 2>&1", 0)
+    assert_match "Rapid", shell_output("run_gubbins.py -h 2>&1", 0)
+    assert_match "tree", shell_output("gubbins_drawer.py -h 2>&1", 0)
+  end
+end
