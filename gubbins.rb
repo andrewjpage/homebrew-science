@@ -1,8 +1,8 @@
 class Gubbins < Formula
   desc "Detect recombinations in Bacteria"
   homepage "https://github.com/sanger-pathogens/gubbins"
-  url "https://github.com/sanger-pathogens/gubbins/archive/v1.4.0.tar.gz"
-  sha256 "9b3ff134b5cfc27ef78f29c12d413ed87637fd97c7ae41e5ac9c81f3d34c4464"
+  url "https://github.com/sanger-pathogens/gubbins/archive/v1.4.1.tar.gz"
+  sha256 "dcc98f70fb91357d4cb2cd0d8d37a03c77b3d2287a61e40ea21e0aee85d4d8ca"
   head "https://github.com/sanger-pathogens/gubbins.git"
   # tag "bioinformatics"
   # doi "10.1093/nar/gku1196"
@@ -12,8 +12,8 @@ class Gubbins < Formula
   depends_on "libtool"   => :build
   depends_on "check"     => :build
   depends_on :python3
-  depends_on "homebrew/python/numpy"  => :python3
-  depends_on "homebrew/python/pillow" => :python3
+  depends_on "homebrew/python/numpy" => ["without-python", "with-python3"]
+  depends_on "homebrew/python/pillow" => ["without-python", "with-python3"]
   depends_on "homebrew/dupes/zlib"  unless OS.mac?
   depends_on "raxml"
   depends_on "fasttree" => ["with-double", :recommended]
@@ -40,8 +40,11 @@ class Gubbins < Formula
   end
 
   def install
-    ENV.prepend_create_path "PYTHONPATH", libexec/"vendor/lib/python#{Language::Python.major_minor_version "python3"}/site-packages"
-    %w[nose dendropy reportlab biopython].each do |r|
+    version = Language::Python.major_minor_version "python3"
+    ENV.prepend_create_path "PYTHONPATH", libexec/"lib/python#{version}/site-packages"
+    ENV.prepend_create_path "PYTHONPATH", libexec/"vendor/lib/python#{version}/site-packages"
+
+    %w[nose biopython dendropy reportlab].each do |r|
       resource(r).stage do
         system "python3", *Language::Python.setup_install_args(libexec/"vendor")
       end
@@ -59,6 +62,12 @@ class Gubbins < Formula
            "--prefix=#{prefix}"
     system "make", "check"
     system "make", "install"
+
+    cd "python" do
+      system "python3", *Language::Python.setup_install_args(libexec)
+    end
+    bin.install Dir[libexec/"bin/*"]
+    bin.env_script_all_files(libexec/"bin", :PYTHONPATH => ENV["PYTHONPATH"])
   end
 
   test do
