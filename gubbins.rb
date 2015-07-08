@@ -55,6 +55,8 @@ class Gubbins < Formula
       inreplace "configure.ac", "PKG_CHECK_MODULES([zlib], [zlib])", "AC_CHECK_LIB(zlib, zlib)"
     end
 
+    inreplace "Makefile.am", "SUBDIRS=src release python", "SUBDIRS=src release"
+
     system "autoreconf", "-i"
     system "./configure",
            "--disable-debug",
