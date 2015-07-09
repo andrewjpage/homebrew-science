@@ -1,14 +1,16 @@
 class Slepc < Formula
+  desc "Scalable Library for Eigenvalue Computations"
   homepage "http://www.grycap.upv.es/slepc"
   url "http://www.grycap.upv.es/slepc/download/download.php?filename=slepc-3.5.3.tar.gz"
-  sha1 "5e886c5018dc0d227ae815feb80d4cdd8779c23c"
+  sha256 "0cbc3bc5ab589f17d01fb45bb99d59c804a8664f0eec851c3b463b60ba97f9b2"
   revision 1
 
   bottle do
     root_url "https://homebrew.bintray.com/bottles-science"
-    sha256 "0156aaee48483d6cb32266a848e53bf06fd6c7a28116c793cd3083110b047c97" => :yosemite
-    sha256 "6390bf1e2c95ed6a826d91566d73b99891faf7029fdb1b52fc0c64c41ad949bf" => :mavericks
-    sha256 "56f492a173528edb6f1786e78294ac06846f3d53d073a51cc578a42d3354b394" => :mountain_lion
+    revision 1
+    sha256 "58641318a441a76650b33a2ae5771f407df53493686425b1610b934b626929c6" => :yosemite
+    sha256 "c8f0b84f8870ddec53a2eae888fe298c3df39caff98fa75588fd42c609e46bdb" => :mavericks
+    sha256 "887a1451913249737108f65903959ea46a049ef6b811d628e08b8eb4095abeeb" => :mountain_lion
   end
 
   deprecated_option "complex" => "with-complex"
@@ -44,7 +46,7 @@ class Slepc < Formula
     ENV["PETSC_DIR"] = "#{Formula["petsc"].opt_prefix}/#{petsc_arch_complex}"
     system "./configure", "--prefix=#{prefix}/#{petsc_arch_complex}", *args
     system "make"
-    # TODO investigate why complex tests fail to run on Linuxbrew
+    # TODO: investigate why complex tests fail to run on Linuxbrew
     system "make", "test"  if build.with? "check"
     system "make", "install"
 
@@ -58,7 +60,7 @@ class Slepc < Formula
     lib.install_symlink Dir["#{prefix}/#{petsc_arch}/lib/*.*"]
     prefix.install_symlink "#{prefix}/#{petsc_arch}/conf"
     doc.install "docs/slepc.pdf", Dir["docs/*.htm"], "docs/manualpages"  # They're not really man pages.
-    share.install "share/slepc/datafiles"
+    (share/"slepc").install "share/slepc/datafiles"
   end
 
   def caveats; <<-EOS.undent
