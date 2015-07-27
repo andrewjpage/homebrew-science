@@ -1,14 +1,13 @@
 class BioformatsCpp < Formula
   desc "Microscopy file formats including OME-TIFF"
   homepage "http://www.openmicroscopy.org/site/products/bio-formats"
-  url "http://downloads.openmicroscopy.org/bio-formats/5.1.2/artifacts/bioformats-dfsg-5.1.2.zip"
-  sha256 "907f6d2c146ef45db034005c5ad86310c10d252dae95d0ddfec6d5bacbdda247"
+  url "http://downloads.openmicroscopy.org/bio-formats/5.1.3/artifacts/bioformats-dfsg-5.1.3.zip"
+  sha256 "765137c548d9f4fdc111e22eec4d413effebbee273d8bba7392b59ad1499f41b"
   head "https://github.com/openmicroscopy/bioformats.git", :branch => "develop", :shallow => false
 
   bottle do
-    root_url "https://homebrew.bintray.com/bottles-science"
-    sha256 "26523ef922bbe264625e33f6a593d66d0e2981ee59bea3aba1a7b35ce5495a4a" => :yosemite
-    sha256 "ba642effbc9bc8a797804b73b566019ff43580c30ba7ac98ee829f18d7c87b89" => :mavericks
+    sha256 "08d11e70a0e2a2ae3267523d4a634d86100e148bbdc2b0f527843ae6beacc7f4" => :yosemite
+    sha256 "7bff25763425a418dea9a9ba8378dcf6975a1fd966c9d600f5dc0ebaceef0a1b" => :mavericks
   end
 
   option "without-check", "Skip build time tests (not recommended)"

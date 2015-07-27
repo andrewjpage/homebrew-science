@@ -1,17 +1,11 @@
 class Octave < Formula
+  desc "a high-level interpreted language for numerical computations."
   homepage "https://www.gnu.org/software/octave/index.html"
   url "http://ftpmirror.gnu.org/octave/octave-3.8.2.tar.bz2"
   mirror "https://ftp.gnu.org/gnu/octave/octave-3.8.2.tar.bz2"
   sha256 "83bbd701aab04e7e57d0d5b8373dd54719bebb64ce0a850e69bf3d7454f33bae"
   head "http://www.octave.org/hg/octave", :branch => "default", :using => :hg
-  revision 1
-
-  bottle do
-    root_url "https://homebrew.bintray.com/bottles-science"
-    sha256 "e63999effbedc0f96613a4fac2528d130be09ce4ee85b0e1311c3061ed2d0622" => :yosemite
-    sha256 "262f20e29136d2eab67d2af9107b388dd55075e3d005dbbcba4de0c5b0fc8357" => :mavericks
-    sha256 "682635f491858976e17d23fc3308e2743bc5200116c68fbea663ac94a352a448" => :mountain_lion
-  end
+  revision 2
 
   stable do
     # Allows clang 3.5 to compile with a recent libc++ release.
@@ -20,6 +14,12 @@ class Octave < Formula
       url "https://gist.github.com/tchaikov/6ce5f697055b0756126a/raw/4fc94a1fa1d5b032f8586ce3ab0015b04351426f/octave-clang3.5-fix.patch"
       sha1 "6e5c0d8f6b07803152c8a1caad39a113fc8b8d0a"
     end
+  end
+
+  bottle do
+    sha256 "98d8a35cd7c4e20e13b77e6999bc75a39ef52f8e5fa6deafd80f60e10c8db8d0" => :yosemite
+    sha256 "0a28985e322d56002755469a22cc5ae3c487c191d35c8b5b3b25c34abcc0b2cb" => :mavericks
+    sha256 "35344dafa1cb05d8d7d1c77c469e012d404b0a5062c840ed062570c94fce3d2b" => :mountain_lion
   end
 
   head do
@@ -58,14 +58,14 @@ class Octave < Formula
   option "without-hdf5",           "Do not use HDF5 (hdf5 data file support)"
   option "without-qhull",          "Do not use the Qhull library (delaunay,voronoi,etc.)"
   option "without-qrupdate",       "Do not use the QRupdate package (qrdelete,qrinsert,qrshift,qrupdate)"
-  option "without-suite-sparse",   "Do not use SuiteSparse (sparse matrix operations)"
+  option "without-suite-sparse421", "Do not use SuiteSparse (sparse matrix operations)"
   option "without-zlib",           "Do not use zlib (compressed MATLAB file formats)"
 
   depends_on :fortran
 
   depends_on "pkg-config"     => :build
   depends_on "gnu-sed"        => :build
-  depends_on "texinfo"        => :build if build.with? "docs"
+  depends_on "texinfo"        => :build if build.with?("docs") && OS.linux?
 
   head do
     depends_on "bison"        => :build
@@ -93,7 +93,7 @@ class Octave < Formula
   depends_on :java            => :recommended
 
   depends_on "gnuplot"       => [:recommended, build.with?("gui") ? "with-qt" : ""]
-  depends_on "suite-sparse"   => :recommended
+  depends_on "suite-sparse421" => :recommended
   depends_on "readline"       => :recommended
   depends_on "arpack"         => :recommended
   depends_on "fftw"           => :recommended
@@ -118,7 +118,7 @@ class Octave < Formula
 
     args << "--with-blas=-L#{Formula["openblas"].opt_lib} -lopenblas" if build.with? "openblas"
     args << "--disable-docs"     if build.without? "docs"
-    args << "--enable-jit"       if build.with?    "jit"
+    args << "--enable-jit"       if build.with? "jit"
     args << "--disable-gui"      if build.without? "gui"
     args << "--without-opengl"   if build.without?("native-graphics") && !build.head?
 
@@ -131,7 +131,7 @@ class Octave < Formula
     args << "--without-qhull"    if build.without? "qhull"
     args << "--without-qrupdate" if build.without? "qrupdate"
 
-    if build.without? "suite-sparse"
+    if build.without? "suite-sparse421"
       args << "--without-amd"
       args << "--without-camd"
       args << "--without-colamd"
@@ -141,12 +141,12 @@ class Octave < Formula
       args << "--without-cholmod"
       args << "--without-umfpack"
     else
-      sparse = Tab.for_name("suite-sparse")
+      sparse = Tab.for_name("suite-sparse421")
       ENV.append_to_cflags "-L#{Formula["metis4"].opt_lib} -lmetis" if sparse.with? "metis4"
     end
 
     args << "--without-zlib"     if build.without? "zlib"
-    args << "--with-x=no"     # We don't need X11 for Mac at all
+    args << "--with-x=no"        if OS.mac? # We don't need X11 for Mac at all
 
     system "./bootstrap" if build.head?
 
@@ -171,10 +171,6 @@ class Octave < Formula
     system "make", "install"
     prefix.install "make-check.log" if File.exist? "make-check.log"
     prefix.install "test/fntests.log" if File.exist? "test/fntests.log"
-  end
-
-  test do
-    system "octave", "--eval", "'(22/7 - pi)/pi'"
   end
 
   def caveats
@@ -244,7 +240,7 @@ class Octave < Formula
             --------
             These failures indicate a conflict between Octave and its BLAS-related
             dependencies. You can likely correct these by removing and reinstalling
-            arpack, qrupdate, suite-sparse, and octave. Please use the same BLAS
+            arpack, qrupdate, suite-sparse421, and octave. Please use the same BLAS
             settings for all (i.e., with the default, or "--with-openblas").
         EOS
       end
@@ -252,6 +248,10 @@ class Octave < Formula
 
     s += "\n" unless s.empty?
     s
+  end
+
+  test do
+    system "octave", "--eval", "'(22/7 - pi)/pi'"
   end
 end
 

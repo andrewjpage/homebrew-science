@@ -1,15 +1,15 @@
 class Mumps < Formula
-  homepage "http://mumps.enseeiht.fr"
-  url "http://mumps.enseeiht.fr/MUMPS_5.0.0.tar.gz"
-  mirror "http://graal.ens-lyon.fr/MUMPS/MUMPS_5.0.0.tar.gz"
-  sha1 "991297608725be2440ece30f4a65dd748624ca5e"
-  revision 3
+  desc "Parallel Sparse Direct Solver"
+  homepage "http://mumps-solver.org"
+  url "http://mumps.enseeiht.fr/MUMPS_5.0.1.tar.gz"
+  mirror "http://graal.ens-lyon.fr/MUMPS/MUMPS_5.0.1.tar.gz"
+  sha256 "50355b2e67873e2239b4998a46f2bbf83f70cdad6517730ab287ae3aae9340a0"
 
   bottle do
-    root_url "https://homebrew.bintray.com/bottles-science"
-    sha256 "2fa9603ef3fe7936a39dbe5443acc7a647253ec1c0370f94c14a5e160ee6d7af" => :yosemite
-    sha256 "1f58248376b2ed17d41c50709edac5f4ee688751f1d12b6d96a7da91a04c86b4" => :mavericks
-    sha256 "ec33985bc13b1a5cafa88d7b509348fb1351af6da4c6c2a2deb80b0e7a63f657" => :mountain_lion
+    cellar :any
+    sha256 "4510d3460be5aa0bef39e2f776c34eecc978e736453cb687876cc55fcf949255" => :yosemite
+    sha256 "7b8097db2750879d77a2a4b39d0d1147b008fcf014b4b6902fd44fb5b808b9fd" => :mavericks
+    sha256 "01779df7a8e244e0e6ea198d1f6b402cff5799de9f1fa745275b69fb8c44a962" => :mountain_lion
   end
 
   depends_on :mpi => [:cc, :cxx, :f90, :recommended]
@@ -26,7 +26,7 @@ class Mumps < Formula
 
   resource "mumps_simple" do
     url "https://github.com/dpo/mumps_simple/archive/v0.4.tar.gz"
-    sha1 "2a20a7d6eb8b2623224fae53aa311241d5b34b70"
+    sha256 "87d1fc87eb04cfa1cba0ca0a18f051b348a93b0b2c2e97279b23994664ee437e"
   end
 
   def install
@@ -134,7 +134,7 @@ class Mumps < Formula
     end
 
     doc.install Dir["doc/*.pdf"]
-    (share + "mumps/examples").install Dir["examples/*[^.o]"]
+    (pkgshare + "examples").install Dir["examples/*[^.o]"]
 
     prefix.install "Makefile.inc"  # For the record.
     File.open(prefix / "make_args.txt", "w") do |f|
@@ -175,11 +175,11 @@ class Mumps < Formula
 
   test do
     cmd = build.without?("mpi") ? "" : "mpirun -np 2"
-    system "#{cmd} #{share}/mumps/examples/ssimpletest < #{share}/mumps/examples/input_simpletest_real"
-    system "#{cmd} #{share}/mumps/examples/dsimpletest < #{share}/mumps/examples/input_simpletest_real"
-    system "#{cmd} #{share}/mumps/examples/csimpletest < #{share}/mumps/examples/input_simpletest_cmplx"
-    system "#{cmd} #{share}/mumps/examples/zsimpletest < #{share}/mumps/examples/input_simpletest_cmplx"
-    system "#{cmd} #{share}/mumps/examples/c_example"
+    system "#{cmd} #{pkgshare}/examples/ssimpletest < #{pkgshare}/examples/input_simpletest_real"
+    system "#{cmd} #{pkgshare}/examples/dsimpletest < #{pkgshare}/examples/input_simpletest_real"
+    system "#{cmd} #{pkgshare}/examples/csimpletest < #{pkgshare}/examples/input_simpletest_cmplx"
+    system "#{cmd} #{pkgshare}/examples/zsimpletest < #{pkgshare}/examples/input_simpletest_cmplx"
+    system "#{cmd} #{pkgshare}/examples/c_example"
     ohai "Test results are in ~/Library/Logs/Homebrew/mumps"
   end
 end

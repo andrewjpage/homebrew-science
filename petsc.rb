@@ -1,17 +1,14 @@
 class Petsc < Formula
-  homepage "http://www.mcs.anl.gov/petsc/index.html"
   desc "Scalable (parallel) solution of scientific applications modeled by partial differential equations"
-  url "http://ftp.mcs.anl.gov/pub/petsc/release-snapshots/petsc-lite-3.5.3.tar.gz"
-  sha256 "e4d70c14fbb96e45b2c304ba05bc93d17d2fd2ff1a3b3c69b9e818e8a62f453c"
+  homepage "http://www.mcs.anl.gov/petsc/index.html"
+  url "http://ftp.mcs.anl.gov/pub/petsc/release-snapshots/petsc-lite-3.6.0.tar.gz"
+  sha256 "46e44b56f9f163e692c71b35f5d6b9b6746ab3484b7c4879d0f3eb475d98f053"
   head "https://bitbucket.org/petsc/petsc", :using => :git
-  revision 3
 
   bottle do
-    root_url "https://homebrew.bintray.com/bottles-science"
-    revision 1
-    sha256 "beccee6c2fc6719c1ae371c5c94e224be24747c75a5fe549b1b9a63bde61cc45" => :yosemite
-    sha256 "ab8979b3454f061781b04875f9bb87c9c760dff248a55b2663e46f9fa6ba8a7d" => :mavericks
-    sha256 "3de4e6690239a775974a0e56fe8efd2c0ef48a984ba1a3a5fcacfb09eb45eb69" => :mountain_lion
+    sha256 "abded28948a8317abe1211b87c958de5ff4ee5c10e6e25c4a79591f843cebfe9" => :yosemite
+    sha256 "4cc16d34a473f0c6c5e4f0d724cedc2d9c1bd86ddad71b45dde5f29b5d04ed92" => :mavericks
+    sha256 "3e80dcbab8d0fc3fae103aa6cf80daf499afd006cfeb56b467478b105c029067" => :mountain_lion
   end
 
   option "without-check", "Skip build-time tests (not recommended)"
@@ -41,7 +38,7 @@ class Petsc < Formula
   depends_on "fftw"         => ["with-mpi", "with-fortran", :recommended]
   depends_on "openblas"     => :optional
 
-  #TODO: add ML, YAML dependencies when the formulae are available
+  # TODO: add ML, YAML dependencies when the formulae are available
 
   def oprefix(f)
     Formula[f].opt_prefix
