@@ -15,6 +15,12 @@ class Fastml < Formula
   depends_on :macos => :mavericks   # won't build on [Mountain] Lion
 
   def install
+    inreplace "libs/phylogeny/phylogeny.vcxproj", "getopt", "fastml_getopt"
+    inreplace "libs/phylogeny/phylogeny.vcproj", "getopt", "fastml_getopt"
+    system "mv", "libs/phylogeny/getopt.h", "libs/phylogeny/fastml_getopt.h"
+    system "mv", "libs/phylogeny/getopt.c", "libs/phylogeny/fastml_getopt.c"
+    system "mv", "libs/phylogeny/getopt1.c", "libs/phylogeny/fastml_getopt1.c"
+
     mkdir "bin"
     system "make", "install"
     bin.install Dir["bin/*"]
