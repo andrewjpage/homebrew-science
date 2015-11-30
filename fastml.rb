@@ -1,10 +1,12 @@
 class Fastml < Formula
+  desc "Probabilistic reconstruction of ancestral sequences using ML"
   homepage "http://fastml.tau.ac.il/source.php"
-  # tag "bioinformatics"
   # doi "10.1093/bioinformatics/18.8.1116"
+  # tag "bioinformatics"
 
   url "http://fastml.tau.ac.il/source/FastML.v3.1.tgz"
   sha256 "16c8631a4186f434f81f5b7e8c1147660e79b025b3c93a6db9889c30477bd5f4"
+  revision 1
 
   bottle do
     cellar :any
@@ -12,14 +14,15 @@ class Fastml < Formula
     sha256 "9b6fef363a5cf10cea598b57a9d77ae80c773c5b0f6e39d4187895616121557b" => :mavericks
   end
 
-  depends_on :macos => :mavericks   # won't build on [Mountain] Lion
+  depends_on :macos => :mavericks # won't build on [Mountain] Lion
 
   def install
+    # Rename bundled version of getopt to avoid conflicts with gcc version
     inreplace "libs/phylogeny/phylogeny.vcxproj", "getopt", "fastml_getopt"
     inreplace "libs/phylogeny/phylogeny.vcproj", "getopt", "fastml_getopt"
-    system "mv", "libs/phylogeny/getopt.h", "libs/phylogeny/fastml_getopt.h"
-    system "mv", "libs/phylogeny/getopt.c", "libs/phylogeny/fastml_getopt.c"
-    system "mv", "libs/phylogeny/getopt1.c", "libs/phylogeny/fastml_getopt1.c"
+    mv "libs/phylogeny/getopt.h", "libs/phylogeny/fastml_getopt.h"
+    mv "libs/phylogeny/getopt.c", "libs/phylogeny/fastml_getopt.c"
+    mv "libs/phylogeny/getopt1.c", "libs/phylogeny/fastml_getopt1.c"
 
     mkdir "bin"
     system "make", "install"
